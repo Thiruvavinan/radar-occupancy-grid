@@ -60,9 +60,10 @@ tell a car from a pedestrian from a fence, so every detection is labelled `car`
 and nine of ten classes score zero by construction. Removing classification from
 the same nuScenes scoring code raises AP to **0.071**, a 20× difference.
 
-Other limits worth knowing: box height and orientation are constants, not
-measurements; pedestrians are found but their motion is rarely right; there is
-no tracking; and with only 10 mini scenes there is no true held-out set.
+Other limits worth knowing: box height is a fixed 1.5 m and orientation is
+inferred from the velocity vector (identity when stationary) — radar measures
+neither; pedestrians are found but their motion is rarely right; there is no
+tracking; and with only 10 mini scenes there is no true held-out set.
 
 ## Run it
 

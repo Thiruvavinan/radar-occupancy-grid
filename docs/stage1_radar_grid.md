@@ -107,11 +107,15 @@ not deleted and recreated on alternating frames).
 
 A world-anchored grid accumulates static objects well and moving ones not at
 all: at 2 Hz a vehicle at 10 m/s crosses ten 1 m cells between cycles, never
-revisits one, and never reaches a second hit. So before each update every cell
-with accumulated speed ≥ 0.5 m/s is carried to `center + v·dt`. Slower cells are
-held still — advecting them would inject velocity noise into the static world,
-which already works. Where two cells land on one square the better-supported one
-survives.
+revisits one, and never reaches a second hit. So before each update **every**
+cell is carried to `center + v·dt`. There is no static/dynamic branch: a
+stationary cell has `v ≈ 0` and stays put on its own. Where two cells land on
+one square the better-supported one survives.
+
+An earlier version gated this on `|v| ≥ 0.5 m/s`, reasoning that advecting
+static cells would inject velocity noise into the part of the grid that already
+worked. Measured, the gate changed nothing (56.7% vs 56.6% precision, recall and
+motion call identical), so it was removed — see §5b.
 
 ## 5. Parameter selection
 
@@ -142,9 +146,12 @@ property (`speed > 0.5 m/s`), stored nowhere. The fair question is whether the
 *pipeline* needs a static/dynamic distinction at all, or whether velocity alone
 suffices. Measured on mini_val at a 4 m match:
 
+Measured with all three mechanisms still present, so the rows below describe
+the state *before* the two removals:
+
 | | precision | recall | motion call |
 |---|---|---|---|
-| **as shipped** | 56.6% | 35.3% | **94.7%** |
+| all three present | 56.6% | 35.3% | **94.7%** |
 | without the per-cell hit rule (`min_hits_dynamic = 2`) | 58.9% | **31.5%** | 94.5% |
 | without the DBSCAN motion split | 57.0% | 35.8% | 94.0% |
 | without either | 58.6% | 31.6% | 94.5% |
