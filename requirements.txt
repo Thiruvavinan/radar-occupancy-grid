@@ -1,0 +1,18 @@
+# Install nuscenes-devkit with --no-deps: its pinned dependency set drags in
+# pycocotools (needs a C toolchain on Windows) and other packages that the
+# radar-only path never imports.
+#
+#   python -m venv .venv
+#   .venv/Scripts/python -m pip install -r requirements.txt
+#   .venv/Scripts/python -m pip install --no-deps nuscenes-devkit
+
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+scikit-learn>=1.3
+pyquaternion>=0.9.9
+Pillow>=9.0
+tqdm>=4.65
+cachetools>=5.0
+shapely>=2.0
+opencv-python>=4.8

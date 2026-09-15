@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+
+# nuScenes data (~4 GB, not redistributable) -- see the README
+v1.0-mini/
+data/
+
+# generated results, except the two figures the README embeds
+outputs/*/frame_*.png
+outputs/*/objects.json
+!outputs/scene-1077/frame_036.png
