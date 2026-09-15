@@ -1,19 +1,15 @@
-"""Step 1-3: load nuScenes radar sweeps and put them in a common frame.
+"""Load all five radars for one keyframe and put them in one common frame.
 
-Three frames matter:
+Per processing cycle (one nuScenes keyframe):
 
-    sensor  each radar's own frame, which is how the .pcd file stores points
-    ego     the vehicle frame, used for output and plotting
-    global  the map frame, which is what the grid indexes cells by
+  1. load each radar's sweep with the devkit's ``RadarPointCloud``
+  2. transform sensor -> ego using that radar's calibrated extrinsics
+  3. transform ego -> global using the ego pose **at that radar's own
+     timestamp**, from the SLERP interpolator
+  4. transform global -> ego at the shared reference time
 
-Positions go sensor -> ego -> global through two rigid transforms, both read
-from the devkit's calibration tables rather than hand-built.
-
-Velocities are only *rotated*, never translated. nuScenes' vx_comp/vy_comp are
-already ego-motion compensated, so they are speeds over ground that merely
-happen to be written in sensor-frame axes; rotating them into the global frame
-gives true velocity over ground. (A velocity has no origin, so translating one
-would be meaningless.)
+Step 3 is the one that matters: the radars fire up to ~34 ms apart, so using a
+single keyframe pose for all five would misplace them relative to each other.
 """
 
 from __future__ import annotations
@@ -23,9 +19,14 @@ from dataclasses import dataclass
 
 import numpy as np
 from nuscenes.utils.data_classes import RadarPointCloud
-from pyquaternion import Quaternion
 
-#: nuScenes ships five radars. All are fused into one point set per keyframe.
+from radar.transform import (
+    invert,
+    rotate_vectors,
+    sensor_to_ego,
+    transform_points,
+)
+
 RADAR_CHANNELS = (
     "RADAR_FRONT",
     "RADAR_FRONT_LEFT",
@@ -37,62 +38,39 @@ RADAR_CHANNELS = (
 # Row indices into the 18-dimensional nuScenes radar point record.
 IDX_X, IDX_Y, IDX_Z = 0, 1, 2
 IDX_RCS = 5
+#: Ego-motion-compensated velocity. Used in preference to the raw radial
+#: velocity (rows 6-7), which is uncompensated and mixes in the ego's own
+#: motion. Documented in the README as the field actually used.
 IDX_VX_COMP, IDX_VY_COMP = 8, 9
 
 
-# --------------------------------------------------------------------------
-# transforms
-# --------------------------------------------------------------------------
-
-def pose_to_matrix(translation, rotation) -> np.ndarray:
-    """4x4 transform from a nuScenes pose record (translation + wxyz quaternion)."""
-    matrix = np.eye(4)
-    matrix[:3, :3] = Quaternion(rotation).rotation_matrix
-    matrix[:3, 3] = np.asarray(translation, dtype=float)
-    return matrix
-
-
-def transform_points(points: np.ndarray, matrix: np.ndarray) -> np.ndarray:
-    """Apply a 4x4 transform to (N, 3) positions."""
-    if points.size == 0:
-        return points.reshape(0, 3)
-    homogeneous = np.hstack([points, np.ones((points.shape[0], 1))])
-    return (matrix @ homogeneous.T).T[:, :3]
-
-
-def invert(matrix: np.ndarray) -> np.ndarray:
-    """Invert a rigid transform without a general matrix inverse."""
-    out = np.eye(4)
-    rotation = matrix[:3, :3]
-    out[:3, :3] = rotation.T
-    out[:3, 3] = -rotation.T @ matrix[:3, 3]
-    return out
-
-
-# --------------------------------------------------------------------------
-# one keyframe of radar
-# --------------------------------------------------------------------------
-
 @dataclass
-class RadarFrame:
-    """Every radar return for one keyframe, in both frames we need."""
+class RadarCycle:
+    """All five radars for one keyframe, pose-compensated to a common time."""
 
     sample_token: str
     scene_name: str
     frame_index: int
-    timestamp: float                  # seconds
-    points_ego: np.ndarray            # (N, 3)
+    reference_timestamp: int          # microseconds; the keyframe time
+    points_ego: np.ndarray            # (N, 3) at the reference time
     points_global: np.ndarray         # (N, 3)
     velocity_ego: np.ndarray          # (N, 2) compensated, ego axes
     velocity_global: np.ndarray       # (N, 2) compensated, global axes
     rcs: np.ndarray                   # (N,) dBm2
-    ego_to_global: np.ndarray         # (4, 4)
+    channel_index: np.ndarray         # (N,) which radar each return came from
+    ego_to_global: np.ndarray         # (4, 4) at the reference time
     global_to_ego: np.ndarray         # (4, 4)
-    ego_translation: np.ndarray       # (3,) ego origin in the global frame
+    ego_translation: np.ndarray       # (3,)
+    timestamp_spread_ms: float        # how far apart the five sweeps were
 
     @property
     def num_points(self) -> int:
         return int(self.points_ego.shape[0])
+
+    @property
+    def timestamp(self) -> float:
+        """Reference time in seconds, for the grid's aging arithmetic."""
+        return self.reference_timestamp / 1e6
 
     @property
     def speed(self) -> np.ndarray:
@@ -100,88 +78,109 @@ class RadarFrame:
         return np.linalg.norm(self.velocity_global, axis=1)
 
 
-def _load_channel(nusc, sample, channel):
-    """Load one radar's returns for one sample, transformed into ego + global."""
+def _load_channel(nusc, sample, channel, interpolator):
+    """One radar's returns, transformed into the global frame.
+
+    The global frame is the meeting point: each radar reaches it through its
+    own pose at its own timestamp, after which they are directly comparable.
+    """
     if channel not in sample["data"]:
         return None
 
     sd_token = sample["data"][channel]
     sd = nusc.get("sample_data", sd_token)
 
-    # RadarPointCloud filtering is class-level global state in the devkit, so
-    # set it explicitly rather than trusting whatever ran last. The defaults
-    # drop returns nuScenes marks invalid or ambiguous.
+    # Devkit filtering is class-level global state, so set it every load rather
+    # than trusting whatever ran last. The defaults drop returns nuScenes marks
+    # invalid or ambiguous.
     RadarPointCloud.default_filters()
     raw = RadarPointCloud.from_file(osp.join(nusc.dataroot, sd["filename"])).points
     if raw.shape[1] == 0:
         return None
 
-    calibration = nusc.get("calibrated_sensor", sd["calibrated_sensor_token"])
-    sensor_to_ego = pose_to_matrix(calibration["translation"], calibration["rotation"])
+    to_ego = sensor_to_ego(nusc, sd_token)
+    # The pose at THIS radar's capture time, not the keyframe's.
+    to_global = interpolator.matrix_at(sd["timestamp"])
 
-    # The ego pose recorded at this sweep's own timestamp. nuScenes keyframes
-    # are synchronised across sensors, so this IS the right pose and no
-    # interpolation between odometry samples is needed -- see the README.
-    ego = nusc.get("ego_pose", sd["ego_pose_token"])
-    ego_to_global = pose_to_matrix(ego["translation"], ego["rotation"])
+    points_ego = transform_points(raw[[IDX_X, IDX_Y, IDX_Z], :].T, to_ego)
 
-    points_ego = transform_points(raw[[IDX_X, IDX_Y, IDX_Z], :].T, sensor_to_ego)
-
-    # Lift the planar velocity to 3D only so the same rotation applies, then
-    # drop z again.
     velocity = np.zeros((raw.shape[1], 3))
     velocity[:, 0] = raw[IDX_VX_COMP, :]
     velocity[:, 1] = raw[IDX_VY_COMP, :]
-    velocity_ego = (sensor_to_ego[:3, :3] @ velocity.T).T
+    velocity_ego = rotate_vectors(velocity, to_ego)
 
     return {
-        "points_ego": points_ego,
-        "points_global": transform_points(points_ego, ego_to_global),
-        "velocity_ego": velocity_ego[:, :2],
-        "velocity_global": (ego_to_global[:3, :3] @ velocity_ego.T).T[:, :2],
+        "points_global": transform_points(points_ego, to_global),
+        "velocity_global": rotate_vectors(velocity_ego, to_global)[:, :2],
         "rcs": raw[IDX_RCS, :],
-        "ego_to_global": ego_to_global,
-        "timestamp": sd["timestamp"] / 1e6,
+        "timestamp": sd["timestamp"],
     }
 
 
-def load_frame(nusc, sample, scene_name, frame_index) -> RadarFrame:
-    """Fuse all five radars of one keyframe into a single RadarFrame."""
-    parts = [p for p in (_load_channel(nusc, sample, c) for c in RADAR_CHANNELS)
-             if p is not None]
+def load_cycle(nusc, sample, scene_name, frame_index, interpolator,
+               channels=RADAR_CHANNELS) -> RadarCycle:
+    """Fuse all five radars of one keyframe into a single pose-compensated set."""
+    parts, channel_ids, timestamps = [], [], []
+    for index, channel in enumerate(channels):
+        loaded = _load_channel(nusc, sample, channel, interpolator)
+        if loaded is None:
+            continue
+        parts.append(loaded)
+        channel_ids.append(np.full(loaded["rcs"].shape[0], index, dtype=int))
+        timestamps.append(loaded["timestamp"])
+
     if not parts:
         raise ValueError(f"sample {sample['token']} has no usable radar returns")
 
-    def stack(key):
-        return np.concatenate([p[key] for p in parts], axis=0)
+    points_global = np.concatenate([p["points_global"] for p in parts])
+    velocity_global = np.concatenate([p["velocity_global"] for p in parts])
 
-    ego_to_global = parts[0]["ego_to_global"]   # shared by all channels
-    return RadarFrame(
+    # The shared reference time: the keyframe's own timestamp, which is also
+    # LIDAR_TOP's, so a pose record exists there exactly.
+    reference = int(sample["timestamp"])
+    ego_to_global = interpolator.matrix_at(reference)
+    global_to_ego = invert(ego_to_global)
+
+    velocity_ego = rotate_vectors(
+        np.hstack([velocity_global, np.zeros((velocity_global.shape[0], 1))]),
+        global_to_ego)[:, :2]
+
+    return RadarCycle(
         sample_token=sample["token"],
         scene_name=scene_name,
         frame_index=frame_index,
-        timestamp=float(np.mean([p["timestamp"] for p in parts])),
-        points_ego=stack("points_ego"),
-        points_global=stack("points_global"),
-        velocity_ego=stack("velocity_ego"),
-        velocity_global=stack("velocity_global"),
-        rcs=stack("rcs"),
+        reference_timestamp=reference,
+        points_ego=transform_points(points_global, global_to_ego),
+        points_global=points_global,
+        velocity_ego=velocity_ego,
+        velocity_global=velocity_global,
+        rcs=np.concatenate([p["rcs"] for p in parts]),
+        channel_index=np.concatenate(channel_ids),
         ego_to_global=ego_to_global,
-        global_to_ego=invert(ego_to_global),
+        global_to_ego=global_to_ego,
         ego_translation=ego_to_global[:3, 3].copy(),
+        timestamp_spread_ms=(max(timestamps) - min(timestamps)) / 1000.0,
     )
 
 
-def iter_scene_frames(nusc, scene_name, max_frames=None):
-    """Yield RadarFrames in order for a named scene, e.g. "scene-0061"."""
+def iter_scene(nusc, scene_name, max_frames=None, channels=RADAR_CHANNELS):
+    """Yield (RadarCycle, interpolator) for each keyframe of a scene."""
+    from radar.sync import EgoPoseInterpolator
+
+    scene = find_scene(nusc, scene_name)
+    interpolator = EgoPoseInterpolator(nusc, scene["token"])
+
+    token, index = scene["first_sample_token"], 0
+    while token and (max_frames is None or index < max_frames):
+        sample = nusc.get("sample", token)
+        yield load_cycle(nusc, sample, scene["name"], index, interpolator, channels)
+        token, index = sample["next"], index + 1
+
+
+def find_scene(nusc, scene_name):
     scene = next((s for s in nusc.scene
                   if scene_name in (s["name"], s["token"])), None)
     if scene is None:
         available = ", ".join(s["name"] for s in nusc.scene)
         raise ValueError(f"scene {scene_name!r} not found. Available: {available}")
-
-    token, index = scene["first_sample_token"], 0
-    while token and (max_frames is None or index < max_frames):
-        sample = nusc.get("sample", token)
-        yield load_frame(nusc, sample, scene["name"], index)
-        token, index = sample["next"], index + 1
+    return scene

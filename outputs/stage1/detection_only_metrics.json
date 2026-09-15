@@ -1,0 +1,154 @@
+{
+ "all": {
+  "eval_set": "mini_val",
+  "gt_set": "all annotations",
+  "detections": 870,
+  "ground_truth": 4441,
+  "precision_recall": {
+   "0.5": {
+    "precision": 0.024509803921568627,
+    "recall": 0.005691519635742743,
+    "f1": 0.009237875288683603,
+    "tp": 20,
+    "fp": 796,
+    "fn": 3494,
+    "mean_position_error_m": 0.3271214935422137
+   },
+   "1.0": {
+    "precision": 0.1482843137254902,
+    "recall": 0.0344336937962436,
+    "f1": 0.05588914549653581,
+    "tp": 121,
+    "fp": 695,
+    "fn": 3393,
+    "mean_position_error_m": 0.6965598640562088
+   },
+   "2.0": {
+    "precision": 0.6151960784313726,
+    "recall": 0.14285714285714285,
+    "f1": 0.23187066974595846,
+    "tp": 502,
+    "fp": 314,
+    "fn": 3012,
+    "mean_position_error_m": 1.3686372954583745
+   },
+   "4.0": {
+    "precision": 0.7965686274509803,
+    "recall": 0.18497438816163916,
+    "f1": 0.30023094688221713,
+    "tp": 650,
+    "fp": 166,
+    "fn": 2864,
+    "mean_position_error_m": 1.6369145196200365
+   }
+  },
+  "ap_by_distance": {
+   "0.5": {
+    "ap": 0.0,
+    "max_recall": 0.0,
+    "precision_at_max_recall": 0.0
+   },
+   "1.0": {
+    "ap": 0.0,
+    "max_recall": 0.03,
+    "precision_at_max_recall": 0.1469428095243645
+   },
+   "2.0": {
+    "ap": 0.02691680516286749,
+    "max_recall": 0.14,
+    "precision_at_max_recall": 0.6180712366865776
+   },
+   "4.0": {
+    "ap": 0.07261239800950135,
+    "max_recall": 0.18,
+    "precision_at_max_recall": 0.8042007041911986
+   }
+  },
+  "mean_ap": 0.02488230079309221,
+  "tp_errors": {
+   "trans_err": 1.3861344690648072,
+   "scale_err": 0.6832451312846043,
+   "orient_err": 1.6722525320969281,
+   "vel_err": 0.3336811184950582
+  },
+  "tp_distance_m": 2.0,
+  "min_recall": 0.1,
+  "min_precision": 0.1
+ },
+ "radar_visible": {
+  "eval_set": "mini_val",
+  "gt_set": "radar-visible only",
+  "detections": 870,
+  "ground_truth": 1349,
+  "precision_recall": {
+   "0.5": {
+    "precision": 0.01715686274509804,
+    "recall": 0.010903426791277258,
+    "f1": 0.013333333333333332,
+    "tp": 14,
+    "fp": 802,
+    "fn": 1270,
+    "mean_position_error_m": 0.32798457409061216
+   },
+   "1.0": {
+    "precision": 0.10294117647058823,
+    "recall": 0.06542056074766354,
+    "f1": 0.08,
+    "tp": 84,
+    "fp": 732,
+    "fn": 1200,
+    "mean_position_error_m": 0.7018465346162343
+   },
+   "2.0": {
+    "precision": 0.4644607843137255,
+    "recall": 0.29517133956386293,
+    "f1": 0.3609523809523809,
+    "tp": 379,
+    "fp": 437,
+    "fn": 905,
+    "mean_position_error_m": 1.3863041929900402
+   },
+   "4.0": {
+    "precision": 0.5882352941176471,
+    "recall": 0.37383177570093457,
+    "f1": 0.45714285714285713,
+    "tp": 480,
+    "fp": 336,
+    "fn": 804,
+    "mean_position_error_m": 1.6294457528502366
+   }
+  },
+  "ap_by_distance": {
+   "0.5": {
+    "ap": 0.0,
+    "max_recall": 0.01,
+    "precision_at_max_recall": 0.016528280858177768
+   },
+   "1.0": {
+    "ap": 0.0,
+    "max_recall": 0.06,
+    "precision_at_max_recall": 0.10396193677226447
+   },
+   "2.0": {
+    "ap": 0.10179805451683928,
+    "max_recall": 0.29,
+    "precision_at_max_recall": 0.4699377125606634
+   },
+   "4.0": {
+    "ap": 0.18152684414469455,
+    "max_recall": 0.37,
+    "precision_at_max_recall": 0.5997878533124434
+   }
+  },
+  "mean_ap": 0.07083122466538345,
+  "tp_errors": {
+   "trans_err": 1.4314926728896482,
+   "scale_err": 0.6639659865196672,
+   "orient_err": 1.674957427419081,
+   "vel_err": 0.22167609982176587
+  },
+  "tp_distance_m": 2.0,
+  "min_recall": 0.1,
+  "min_precision": 0.1
+ }
+}

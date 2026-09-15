@@ -16,3 +16,6 @@ tqdm>=4.65
 cachetools>=5.0
 shapely>=2.0
 opencv-python>=4.8
+
+# Needed only by NuScenesMap, i.e. by the optional road-masking step.
+descartes>=1.1

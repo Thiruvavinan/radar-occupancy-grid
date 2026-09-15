@@ -2,11 +2,13 @@
 __pycache__/
 *.pyc
 
-# nuScenes data (~4 GB, not redistributable) -- see the README
+# nuScenes data + map expansion (~4.5 GB, not redistributable)
 v1.0-mini/
-data/
 
-# generated results, except the two figures the README embeds
-outputs/*/frame_*.png
-outputs/*/objects.json
-!outputs/scene-1077/frame_036.png
+# Generated results. The two figures the README embeds are kept; the rest
+# regenerate from `python scripts/run_stage1.py`.
+outputs/stage1/*/frame_*.png
+outputs/stage1/*/camera_*.png
+outputs/stage1/results_nuscenes.json
+!outputs/stage1/scene-0103/frame_016.png
+!outputs/stage1/scene-0103/camera_016.png

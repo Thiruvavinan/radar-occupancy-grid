@@ -1,0 +1,816 @@
+{
+ "scene-0103": [
+  {
+   "frame_index": 0,
+   "radar_points": 281,
+   "timestamp_spread_ms": 63.5,
+   "live_cells": 179,
+   "filtered_cells": 15,
+   "road_masked_out": 8,
+   "detections": 4,
+   "moving": 4
+  },
+  {
+   "frame_index": 1,
+   "radar_points": 277,
+   "timestamp_spread_ms": 52.6,
+   "live_cells": 272,
+   "filtered_cells": 26,
+   "road_masked_out": 68,
+   "detections": 4,
+   "moving": 4
+  },
+  {
+   "frame_index": 2,
+   "radar_points": 323,
+   "timestamp_spread_ms": 47.5,
+   "live_cells": 372,
+   "filtered_cells": 24,
+   "road_masked_out": 108,
+   "detections": 4,
+   "moving": 4
+  },
+  {
+   "frame_index": 3,
+   "radar_points": 274,
+   "timestamp_spread_ms": 26.8,
+   "live_cells": 445,
+   "filtered_cells": 32,
+   "road_masked_out": 140,
+   "detections": 6,
+   "moving": 6
+  },
+  {
+   "frame_index": 4,
+   "radar_points": 262,
+   "timestamp_spread_ms": 32.1,
+   "live_cells": 492,
+   "filtered_cells": 31,
+   "road_masked_out": 168,
+   "detections": 3,
+   "moving": 3
+  },
+  {
+   "frame_index": 5,
+   "radar_points": 240,
+   "timestamp_spread_ms": 42.5,
+   "live_cells": 542,
+   "filtered_cells": 30,
+   "road_masked_out": 158,
+   "detections": 6,
+   "moving": 5
+  },
+  {
+   "frame_index": 6,
+   "radar_points": 258,
+   "timestamp_spread_ms": 61.1,
+   "live_cells": 541,
+   "filtered_cells": 33,
+   "road_masked_out": 157,
+   "detections": 6,
+   "moving": 3
+  },
+  {
+   "frame_index": 7,
+   "radar_points": 222,
+   "timestamp_spread_ms": 35.1,
+   "live_cells": 549,
+   "filtered_cells": 35,
+   "road_masked_out": 161,
+   "detections": 6,
+   "moving": 3
+  },
+  {
+   "frame_index": 8,
+   "radar_points": 244,
+   "timestamp_spread_ms": 58.6,
+   "live_cells": 529,
+   "filtered_cells": 44,
+   "road_masked_out": 153,
+   "detections": 8,
+   "moving": 4
+  },
+  {
+   "frame_index": 9,
+   "radar_points": 240,
+   "timestamp_spread_ms": 72.6,
+   "live_cells": 505,
+   "filtered_cells": 44,
+   "road_masked_out": 144,
+   "detections": 8,
+   "moving": 4
+  },
+  {
+   "frame_index": 10,
+   "radar_points": 232,
+   "timestamp_spread_ms": 47.5,
+   "live_cells": 502,
+   "filtered_cells": 41,
+   "road_masked_out": 143,
+   "detections": 7,
+   "moving": 3
+  },
+  {
+   "frame_index": 11,
+   "radar_points": 228,
+   "timestamp_spread_ms": 53.8,
+   "live_cells": 510,
+   "filtered_cells": 49,
+   "road_masked_out": 150,
+   "detections": 8,
+   "moving": 4
+  },
+  {
+   "frame_index": 12,
+   "radar_points": 238,
+   "timestamp_spread_ms": 57.1,
+   "live_cells": 530,
+   "filtered_cells": 53,
+   "road_masked_out": 158,
+   "detections": 10,
+   "moving": 3
+  },
+  {
+   "frame_index": 13,
+   "radar_points": 214,
+   "timestamp_spread_ms": 50.3,
+   "live_cells": 520,
+   "filtered_cells": 52,
+   "road_masked_out": 162,
+   "detections": 12,
+   "moving": 4
+  },
+  {
+   "frame_index": 14,
+   "radar_points": 220,
+   "timestamp_spread_ms": 52.7,
+   "live_cells": 512,
+   "filtered_cells": 51,
+   "road_masked_out": 165,
+   "detections": 11,
+   "moving": 4
+  },
+  {
+   "frame_index": 15,
+   "radar_points": 213,
+   "timestamp_spread_ms": 65.4,
+   "live_cells": 492,
+   "filtered_cells": 54,
+   "road_masked_out": 169,
+   "detections": 13,
+   "moving": 5
+  },
+  {
+   "frame_index": 16,
+   "radar_points": 231,
+   "timestamp_spread_ms": 19.3,
+   "live_cells": 484,
+   "filtered_cells": 57,
+   "road_masked_out": 170,
+   "detections": 11,
+   "moving": 2
+  },
+  {
+   "frame_index": 17,
+   "radar_points": 215,
+   "timestamp_spread_ms": 19.9,
+   "live_cells": 471,
+   "filtered_cells": 44,
+   "road_masked_out": 162,
+   "detections": 9,
+   "moving": 4
+  },
+  {
+   "frame_index": 18,
+   "radar_points": 206,
+   "timestamp_spread_ms": 25.4,
+   "live_cells": 467,
+   "filtered_cells": 51,
+   "road_masked_out": 164,
+   "detections": 10,
+   "moving": 3
+  },
+  {
+   "frame_index": 19,
+   "radar_points": 216,
+   "timestamp_spread_ms": 31.6,
+   "live_cells": 458,
+   "filtered_cells": 51,
+   "road_masked_out": 154,
+   "detections": 10,
+   "moving": 2
+  },
+  {
+   "frame_index": 20,
+   "radar_points": 202,
+   "timestamp_spread_ms": 66.7,
+   "live_cells": 448,
+   "filtered_cells": 46,
+   "road_masked_out": 142,
+   "detections": 9,
+   "moving": 2
+  },
+  {
+   "frame_index": 21,
+   "radar_points": 228,
+   "timestamp_spread_ms": 61.0,
+   "live_cells": 452,
+   "filtered_cells": 49,
+   "road_masked_out": 142,
+   "detections": 11,
+   "moving": 3
+  },
+  {
+   "frame_index": 22,
+   "radar_points": 231,
+   "timestamp_spread_ms": 55.0,
+   "live_cells": 444,
+   "filtered_cells": 47,
+   "road_masked_out": 149,
+   "detections": 10,
+   "moving": 2
+  },
+  {
+   "frame_index": 23,
+   "radar_points": 240,
+   "timestamp_spread_ms": 40.3,
+   "live_cells": 458,
+   "filtered_cells": 52,
+   "road_masked_out": 149,
+   "detections": 9,
+   "moving": 2
+  },
+  {
+   "frame_index": 24,
+   "radar_points": 242,
+   "timestamp_spread_ms": 52.3,
+   "live_cells": 468,
+   "filtered_cells": 50,
+   "road_masked_out": 157,
+   "detections": 10,
+   "moving": 2
+  },
+  {
+   "frame_index": 25,
+   "radar_points": 249,
+   "timestamp_spread_ms": 48.8,
+   "live_cells": 461,
+   "filtered_cells": 45,
+   "road_masked_out": 161,
+   "detections": 10,
+   "moving": 3
+  },
+  {
+   "frame_index": 26,
+   "radar_points": 298,
+   "timestamp_spread_ms": 73.3,
+   "live_cells": 487,
+   "filtered_cells": 52,
+   "road_masked_out": 162,
+   "detections": 9,
+   "moving": 2
+  },
+  {
+   "frame_index": 27,
+   "radar_points": 250,
+   "timestamp_spread_ms": 38.6,
+   "live_cells": 504,
+   "filtered_cells": 59,
+   "road_masked_out": 155,
+   "detections": 13,
+   "moving": 2
+  },
+  {
+   "frame_index": 28,
+   "radar_points": 254,
+   "timestamp_spread_ms": 66.3,
+   "live_cells": 511,
+   "filtered_cells": 50,
+   "road_masked_out": 149,
+   "detections": 9,
+   "moving": 1
+  },
+  {
+   "frame_index": 29,
+   "radar_points": 258,
+   "timestamp_spread_ms": 50.5,
+   "live_cells": 505,
+   "filtered_cells": 64,
+   "road_masked_out": 133,
+   "detections": 15,
+   "moving": 1
+  },
+  {
+   "frame_index": 30,
+   "radar_points": 262,
+   "timestamp_spread_ms": 39.4,
+   "live_cells": 511,
+   "filtered_cells": 70,
+   "road_masked_out": 140,
+   "detections": 17,
+   "moving": 3
+  },
+  {
+   "frame_index": 31,
+   "radar_points": 235,
+   "timestamp_spread_ms": 23.3,
+   "live_cells": 519,
+   "filtered_cells": 76,
+   "road_masked_out": 141,
+   "detections": 17,
+   "moving": 4
+  },
+  {
+   "frame_index": 32,
+   "radar_points": 262,
+   "timestamp_spread_ms": 64.4,
+   "live_cells": 506,
+   "filtered_cells": 77,
+   "road_masked_out": 136,
+   "detections": 13,
+   "moving": 4
+  },
+  {
+   "frame_index": 33,
+   "radar_points": 245,
+   "timestamp_spread_ms": 11.7,
+   "live_cells": 517,
+   "filtered_cells": 69,
+   "road_masked_out": 140,
+   "detections": 14,
+   "moving": 6
+  },
+  {
+   "frame_index": 34,
+   "radar_points": 235,
+   "timestamp_spread_ms": 31.8,
+   "live_cells": 533,
+   "filtered_cells": 68,
+   "road_masked_out": 149,
+   "detections": 12,
+   "moving": 5
+  },
+  {
+   "frame_index": 35,
+   "radar_points": 245,
+   "timestamp_spread_ms": 48.2,
+   "live_cells": 539,
+   "filtered_cells": 66,
+   "road_masked_out": 146,
+   "detections": 14,
+   "moving": 2
+  },
+  {
+   "frame_index": 36,
+   "radar_points": 224,
+   "timestamp_spread_ms": 54.4,
+   "live_cells": 542,
+   "filtered_cells": 68,
+   "road_masked_out": 137,
+   "detections": 14,
+   "moving": 3
+  },
+  {
+   "frame_index": 37,
+   "radar_points": 220,
+   "timestamp_spread_ms": 40.9,
+   "live_cells": 524,
+   "filtered_cells": 78,
+   "road_masked_out": 133,
+   "detections": 18,
+   "moving": 5
+  },
+  {
+   "frame_index": 38,
+   "radar_points": 231,
+   "timestamp_spread_ms": 52.4,
+   "live_cells": 505,
+   "filtered_cells": 79,
+   "road_masked_out": 130,
+   "detections": 14,
+   "moving": 3
+  },
+  {
+   "frame_index": 39,
+   "radar_points": 216,
+   "timestamp_spread_ms": 50.3,
+   "live_cells": 477,
+   "filtered_cells": 78,
+   "road_masked_out": 133,
+   "detections": 14,
+   "moving": 2
+  }
+ ],
+ "scene-0916": [
+  {
+   "frame_index": 0,
+   "radar_points": 149,
+   "timestamp_spread_ms": 30.9,
+   "live_cells": 123,
+   "filtered_cells": 5,
+   "road_masked_out": 3,
+   "detections": 1,
+   "moving": 1
+  },
+  {
+   "frame_index": 1,
+   "radar_points": 167,
+   "timestamp_spread_ms": 57.4,
+   "live_cells": 226,
+   "filtered_cells": 14,
+   "road_masked_out": 30,
+   "detections": 1,
+   "moving": 1
+  },
+  {
+   "frame_index": 2,
+   "radar_points": 151,
+   "timestamp_spread_ms": 53.5,
+   "live_cells": 302,
+   "filtered_cells": 21,
+   "road_masked_out": 62,
+   "detections": 3,
+   "moving": 2
+  },
+  {
+   "frame_index": 3,
+   "radar_points": 175,
+   "timestamp_spread_ms": 45.0,
+   "live_cells": 380,
+   "filtered_cells": 32,
+   "road_masked_out": 95,
+   "detections": 4,
+   "moving": 3
+  },
+  {
+   "frame_index": 4,
+   "radar_points": 182,
+   "timestamp_spread_ms": 25.2,
+   "live_cells": 445,
+   "filtered_cells": 33,
+   "road_masked_out": 138,
+   "detections": 4,
+   "moving": 3
+  },
+  {
+   "frame_index": 5,
+   "radar_points": 185,
+   "timestamp_spread_ms": 20.9,
+   "live_cells": 507,
+   "filtered_cells": 41,
+   "road_masked_out": 144,
+   "detections": 6,
+   "moving": 4
+  },
+  {
+   "frame_index": 6,
+   "radar_points": 207,
+   "timestamp_spread_ms": 55.0,
+   "live_cells": 546,
+   "filtered_cells": 48,
+   "road_masked_out": 146,
+   "detections": 5,
+   "moving": 3
+  },
+  {
+   "frame_index": 7,
+   "radar_points": 252,
+   "timestamp_spread_ms": 68.8,
+   "live_cells": 598,
+   "filtered_cells": 55,
+   "road_masked_out": 168,
+   "detections": 8,
+   "moving": 3
+  },
+  {
+   "frame_index": 8,
+   "radar_points": 213,
+   "timestamp_spread_ms": 67.9,
+   "live_cells": 614,
+   "filtered_cells": 54,
+   "road_masked_out": 180,
+   "detections": 11,
+   "moving": 4
+  },
+  {
+   "frame_index": 9,
+   "radar_points": 187,
+   "timestamp_spread_ms": 7.4,
+   "live_cells": 607,
+   "filtered_cells": 60,
+   "road_masked_out": 168,
+   "detections": 9,
+   "moving": 2
+  },
+  {
+   "frame_index": 10,
+   "radar_points": 191,
+   "timestamp_spread_ms": 10.6,
+   "live_cells": 594,
+   "filtered_cells": 62,
+   "road_masked_out": 163,
+   "detections": 8,
+   "moving": 1
+  },
+  {
+   "frame_index": 11,
+   "radar_points": 179,
+   "timestamp_spread_ms": 37.8,
+   "live_cells": 589,
+   "filtered_cells": 66,
+   "road_masked_out": 151,
+   "detections": 11,
+   "moving": 3
+  },
+  {
+   "frame_index": 12,
+   "radar_points": 168,
+   "timestamp_spread_ms": 39.3,
+   "live_cells": 561,
+   "filtered_cells": 74,
+   "road_masked_out": 136,
+   "detections": 8,
+   "moving": 2
+  },
+  {
+   "frame_index": 13,
+   "radar_points": 168,
+   "timestamp_spread_ms": 19.4,
+   "live_cells": 542,
+   "filtered_cells": 62,
+   "road_masked_out": 131,
+   "detections": 8,
+   "moving": 3
+  },
+  {
+   "frame_index": 14,
+   "radar_points": 148,
+   "timestamp_spread_ms": 65.7,
+   "live_cells": 507,
+   "filtered_cells": 57,
+   "road_masked_out": 129,
+   "detections": 10,
+   "moving": 3
+  },
+  {
+   "frame_index": 15,
+   "radar_points": 151,
+   "timestamp_spread_ms": 63.8,
+   "live_cells": 486,
+   "filtered_cells": 57,
+   "road_masked_out": 126,
+   "detections": 10,
+   "moving": 3
+  },
+  {
+   "frame_index": 16,
+   "radar_points": 134,
+   "timestamp_spread_ms": 58.0,
+   "live_cells": 488,
+   "filtered_cells": 59,
+   "road_masked_out": 122,
+   "detections": 10,
+   "moving": 5
+  },
+  {
+   "frame_index": 17,
+   "radar_points": 140,
+   "timestamp_spread_ms": 64.5,
+   "live_cells": 488,
+   "filtered_cells": 66,
+   "road_masked_out": 122,
+   "detections": 15,
+   "moving": 9
+  },
+  {
+   "frame_index": 18,
+   "radar_points": 140,
+   "timestamp_spread_ms": 45.5,
+   "live_cells": 493,
+   "filtered_cells": 71,
+   "road_masked_out": 115,
+   "detections": 16,
+   "moving": 10
+  },
+  {
+   "frame_index": 19,
+   "radar_points": 159,
+   "timestamp_spread_ms": 51.0,
+   "live_cells": 501,
+   "filtered_cells": 60,
+   "road_masked_out": 106,
+   "detections": 12,
+   "moving": 6
+  },
+  {
+   "frame_index": 20,
+   "radar_points": 152,
+   "timestamp_spread_ms": 68.4,
+   "live_cells": 489,
+   "filtered_cells": 49,
+   "road_masked_out": 97,
+   "detections": 12,
+   "moving": 3
+  },
+  {
+   "frame_index": 21,
+   "radar_points": 138,
+   "timestamp_spread_ms": 53.0,
+   "live_cells": 459,
+   "filtered_cells": 46,
+   "road_masked_out": 89,
+   "detections": 10,
+   "moving": 1
+  },
+  {
+   "frame_index": 22,
+   "radar_points": 157,
+   "timestamp_spread_ms": 52.9,
+   "live_cells": 430,
+   "filtered_cells": 52,
+   "road_masked_out": 92,
+   "detections": 11,
+   "moving": 1
+  },
+  {
+   "frame_index": 23,
+   "radar_points": 155,
+   "timestamp_spread_ms": 50.1,
+   "live_cells": 422,
+   "filtered_cells": 54,
+   "road_masked_out": 89,
+   "detections": 11,
+   "moving": 0
+  },
+  {
+   "frame_index": 24,
+   "radar_points": 145,
+   "timestamp_spread_ms": 42.0,
+   "live_cells": 400,
+   "filtered_cells": 52,
+   "road_masked_out": 85,
+   "detections": 12,
+   "moving": 0
+  },
+  {
+   "frame_index": 25,
+   "radar_points": 162,
+   "timestamp_spread_ms": 37.6,
+   "live_cells": 378,
+   "filtered_cells": 55,
+   "road_masked_out": 79,
+   "detections": 13,
+   "moving": 0
+  },
+  {
+   "frame_index": 26,
+   "radar_points": 159,
+   "timestamp_spread_ms": 54.8,
+   "live_cells": 362,
+   "filtered_cells": 52,
+   "road_masked_out": 78,
+   "detections": 16,
+   "moving": 0
+  },
+  {
+   "frame_index": 27,
+   "radar_points": 184,
+   "timestamp_spread_ms": 64.5,
+   "live_cells": 316,
+   "filtered_cells": 54,
+   "road_masked_out": 54,
+   "detections": 16,
+   "moving": 0
+  },
+  {
+   "frame_index": 28,
+   "radar_points": 182,
+   "timestamp_spread_ms": 54.0,
+   "live_cells": 302,
+   "filtered_cells": 59,
+   "road_masked_out": 44,
+   "detections": 16,
+   "moving": 0
+  },
+  {
+   "frame_index": 29,
+   "radar_points": 163,
+   "timestamp_spread_ms": 53.3,
+   "live_cells": 286,
+   "filtered_cells": 60,
+   "road_masked_out": 51,
+   "detections": 16,
+   "moving": 0
+  },
+  {
+   "frame_index": 30,
+   "radar_points": 174,
+   "timestamp_spread_ms": 48.0,
+   "live_cells": 300,
+   "filtered_cells": 55,
+   "road_masked_out": 45,
+   "detections": 12,
+   "moving": 0
+  },
+  {
+   "frame_index": 31,
+   "radar_points": 168,
+   "timestamp_spread_ms": 67.9,
+   "live_cells": 308,
+   "filtered_cells": 59,
+   "road_masked_out": 48,
+   "detections": 14,
+   "moving": 0
+  },
+  {
+   "frame_index": 32,
+   "radar_points": 189,
+   "timestamp_spread_ms": 32.4,
+   "live_cells": 307,
+   "filtered_cells": 63,
+   "road_masked_out": 59,
+   "detections": 14,
+   "moving": 0
+  },
+  {
+   "frame_index": 33,
+   "radar_points": 197,
+   "timestamp_spread_ms": 40.8,
+   "live_cells": 314,
+   "filtered_cells": 63,
+   "road_masked_out": 56,
+   "detections": 15,
+   "moving": 0
+  },
+  {
+   "frame_index": 34,
+   "radar_points": 162,
+   "timestamp_spread_ms": 68.6,
+   "live_cells": 315,
+   "filtered_cells": 66,
+   "road_masked_out": 56,
+   "detections": 16,
+   "moving": 0
+  },
+  {
+   "frame_index": 35,
+   "radar_points": 182,
+   "timestamp_spread_ms": 51.4,
+   "live_cells": 313,
+   "filtered_cells": 66,
+   "road_masked_out": 50,
+   "detections": 15,
+   "moving": 0
+  },
+  {
+   "frame_index": 36,
+   "radar_points": 175,
+   "timestamp_spread_ms": 50.2,
+   "live_cells": 306,
+   "filtered_cells": 66,
+   "road_masked_out": 50,
+   "detections": 17,
+   "moving": 0
+  },
+  {
+   "frame_index": 37,
+   "radar_points": 177,
+   "timestamp_spread_ms": 65.6,
+   "live_cells": 320,
+   "filtered_cells": 69,
+   "road_masked_out": 49,
+   "detections": 18,
+   "moving": 0
+  },
+  {
+   "frame_index": 38,
+   "radar_points": 183,
+   "timestamp_spread_ms": 52.5,
+   "live_cells": 314,
+   "filtered_cells": 75,
+   "road_masked_out": 47,
+   "detections": 17,
+   "moving": 0
+  },
+  {
+   "frame_index": 39,
+   "radar_points": 168,
+   "timestamp_spread_ms": 60.6,
+   "live_cells": 306,
+   "filtered_cells": 72,
+   "road_masked_out": 50,
+   "detections": 15,
+   "moving": 1
+  },
+  {
+   "frame_index": 40,
+   "radar_points": 175,
+   "timestamp_spread_ms": 64.4,
+   "live_cells": 323,
+   "filtered_cells": 79,
+   "road_masked_out": 61,
+   "detections": 16,
+   "moving": 2
+  }
+ ]
+}
