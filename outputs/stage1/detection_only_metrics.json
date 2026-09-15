@@ -42,6 +42,26 @@
     "mean_position_error_m": 1.6369145196200365
    }
   },
+  "by_motion": {
+   "moving": {
+    "precision": 0.48034934497816595,
+    "recall": 0.12035010940919037,
+    "motion_call_correct": 0.6727272727272727,
+    "tp": 110,
+    "fp": 119,
+    "fn": 804
+   },
+   "static": {
+    "precision": 0.6678023850085179,
+    "recall": 0.15076923076923077,
+    "motion_call_correct": 0.9846938775510204,
+    "tp": 392,
+    "fp": 195,
+    "fn": 2208
+   },
+   "match_distance_m": 2.0,
+   "speed_threshold_ms": 0.5
+  },
   "ap_by_distance": {
    "0.5": {
     "ap": 0.0,
@@ -117,6 +137,26 @@
     "fn": 804,
     "mean_position_error_m": 1.6294457528502366
    }
+  },
+  "by_motion": {
+   "moving": {
+    "precision": 0.3474178403755869,
+    "recall": 0.29838709677419356,
+    "motion_call_correct": 0.7567567567567568,
+    "tp": 74,
+    "fp": 139,
+    "fn": 174
+   },
+   "static": {
+    "precision": 0.5058043117744611,
+    "recall": 0.2944015444015444,
+    "motion_call_correct": 0.9868852459016394,
+    "tp": 305,
+    "fp": 298,
+    "fn": 731
+   },
+   "match_distance_m": 2.0,
+   "speed_threshold_ms": 0.5
   },
   "ap_by_distance": {
    "0.5": {

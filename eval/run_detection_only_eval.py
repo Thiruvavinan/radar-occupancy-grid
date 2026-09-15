@@ -90,6 +90,86 @@ def _relabel(eval_boxes, radar_visible_only=False, nusc=None):
     return kept
 
 
+def _gt_is_moving(nusc, sample_token, threshold=0.5):
+    """Rounded centres of this sample's annotations that are actually moving.
+
+    Motion is read from `nusc.box_velocity`, i.e. how the annotation itself
+    moves between keyframes. It is NOT inferred from the category: a parked car
+    is stationary and a walking pedestrian is not, so any mapping that calls
+    "car" dynamic and "pedestrian" static gets both cases backwards.
+    """
+    moving = set()
+    for token in nusc.get("sample", sample_token)["anns"]:
+        velocity = nusc.box_velocity(token)
+        if not np.all(np.isfinite(velocity[:2])):
+            continue
+        if float(np.linalg.norm(velocity[:2])) > threshold:
+            ann = nusc.get("sample_annotation", token)
+            moving.add(tuple(round(v, 3) for v in ann["translation"]))
+    return moving
+
+
+def _split_by_motion(nusc, ground_truth, predictions, config, threshold=0.5):
+    """Precision/recall separately for genuinely moving and stationary objects.
+
+    Ground truth is split by its own measured velocity; a detection is counted
+    against whichever group its matched ground truth belongs to. Detections that
+    match nothing are false positives for the group their own velocity claims,
+    which is what makes this a fair test of the static/dynamic call.
+    """
+    distance = config.dist_th_tp          # 2.0 m, nuScenes' TP distance
+    groups = {"moving": dict(tp=0, fp=0, fn=0, right=0),
+              "static": dict(tp=0, fp=0, fn=0, right=0)}
+
+    for token in ground_truth.sample_tokens:
+        truth = list(ground_truth[token])
+        detections = sorted(predictions[token],
+                            key=lambda b: b.detection_score, reverse=True)
+        moving_gt = _gt_is_moving(nusc, token, threshold)
+        labels = [tuple(round(v, 3) for v in b.translation) in moving_gt
+                  for b in truth]
+
+        if not truth:
+            for detection in detections:
+                speed = float(np.hypot(*detection.velocity[:2]))
+                groups["moving" if speed > threshold else "static"]["fp"] += 1
+            continue
+
+        centres = np.array([b.translation[:2] for b in truth])
+        taken = np.zeros(len(truth), dtype=bool)
+        for detection in detections:
+            speed = float(np.hypot(*detection.velocity[:2]))
+            said_moving = speed > threshold
+            distances = np.linalg.norm(centres - np.array(detection.translation[:2]),
+                                       axis=1)
+            distances[taken] = np.inf
+            best = int(np.argmin(distances))
+            if distances[best] <= distance:
+                taken[best] = True
+                group = "moving" if labels[best] else "static"
+                groups[group]["tp"] += 1
+                groups[group]["right"] += int(said_moving == labels[best])
+            else:
+                groups["moving" if said_moving else "static"]["fp"] += 1
+
+        for index, claimed in enumerate(taken):
+            if not claimed:
+                groups["moving" if labels[index] else "static"]["fn"] += 1
+
+    out = {}
+    for name, counts in groups.items():
+        tp, fp, fn = counts["tp"], counts["fp"], counts["fn"]
+        out[name] = {
+            "precision": tp / (tp + fp) if (tp + fp) else 0.0,
+            "recall": tp / (tp + fn) if (tp + fn) else 0.0,
+            "motion_call_correct": counts["right"] / tp if tp else float("nan"),
+            "tp": tp, "fp": fp, "fn": fn,
+        }
+    out["match_distance_m"] = distance
+    out["speed_threshold_ms"] = threshold
+    return out
+
+
 def _precision_recall(ground_truth, predictions, config):
     """Plain TP / FP / FN counts at each matching distance.
 
@@ -164,6 +244,7 @@ def evaluate(nusc, result_path, eval_set="mini_val", radar_visible_only=False,
     # Straight counts, matched exactly the way nuScenes matches: detections
     # sorted by score, greedy nearest ground truth, one GT per detection.
     counts = _precision_recall(ground_truth, predictions, config)
+    by_motion = _split_by_motion(nusc, ground_truth, predictions, config)
 
     rows, aps = {}, []
     for threshold in config.dist_ths:
@@ -196,6 +277,7 @@ def evaluate(nusc, result_path, eval_set="mini_val", radar_visible_only=False,
         "detections": n_pred,
         "ground_truth": n_gt,
         "precision_recall": counts,
+        "by_motion": by_motion,
         "ap_by_distance": rows,
         "mean_ap": float(np.mean(aps)),
         "tp_errors": tp_errors,
@@ -219,6 +301,24 @@ def format_report(result: dict) -> str:
             f"  {threshold:>10.1f}m {row['precision']:>9.1%} {row['recall']:>7.1%} "
             f"{row['f1']:>6.1%} {row['tp']:>6d} {row['fp']:>6d} {row['fn']:>6d} "
             f"{row['mean_position_error_m']:>7.2f}m")
+
+    motion = result.get("by_motion")
+    if motion:
+        lines += [
+            "",
+            f"  split by the ground truth's OWN measured velocity "
+            f"(> {motion['speed_threshold_ms']} m/s), at "
+            f"{motion['match_distance_m']} m match:",
+            f"  {'':>11} {'precision':>10} {'recall':>8} {'motion call':>12} "
+            f"{'TP':>6} {'FP':>6} {'FN':>6}",
+            "  " + "-" * 64,
+        ]
+        for name in ("moving", "static"):
+            row = motion[name]
+            lines.append(
+                f"  {name:>11} {row['precision']:>9.1%} {row['recall']:>7.1%} "
+                f"{row['motion_call_correct']:>11.1%} {row['tp']:>6d} "
+                f"{row['fp']:>6d} {row['fn']:>6d}")
 
     lines += [
         "",
@@ -283,7 +383,8 @@ def main(argv=None):
     with open(out, "w") as handle:
         json.dump({k: {**v,
                        "ap_by_distance": {str(t): r for t, r in v["ap_by_distance"].items()},
-                       "precision_recall": {str(t): r for t, r in v["precision_recall"].items()}}
+                       "precision_recall": {str(t): r for t, r in v["precision_recall"].items()},
+                       "by_motion": v["by_motion"]}
                    for k, v in results.items()}, handle, indent=1)
     print(f"\nwrote {out}")
     return 0

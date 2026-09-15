@@ -19,6 +19,19 @@ GT_COLOR = "#e9c46a"
 EGO_COLOR = "#264653"
 
 
+def _bev(x, y):
+    """Ego frame (x forward, y left) -> screen axes (forward up, left left).
+
+    Matplotlib's y-axis already increases upward, so the mapping is
+    ``screen_x = -y``, ``screen_y = +x``. Note the sign: negating x instead
+    would put forward at the BOTTOM of the plot.
+
+    This is a presentation convention, not a correction -- the underlying data
+    is ISO 8855 throughout and verified as such (`--verify`).
+    """
+    return -np.asarray(y), np.asarray(x)
+
+
 def _short(name):
     parts = name.split(".")
     return parts[1] if len(parts) > 1 else parts[0]
@@ -27,51 +40,58 @@ def _short(name):
 def plot_cycle(cycle, grid, cells, detections, gt_boxes=None, plot_range=50.0,
                out_path=None, masked_out=0):
     """One keyframe, everything overlaid, in the ego frame (x forward, y left)."""
-    fig, ax = plt.subplots(figsize=(10.5, 10))
-    ax.set_xlim(-plot_range, plot_range)
+    fig, ax = plt.subplots(figsize=(10, 10.5))
+    ax.set_xlim(plot_range, -plot_range)     # +y (left) on the left of the plot
     ax.set_ylim(-plot_range, plot_range)
     ax.set_aspect("equal")
-    ax.set_xlabel("ego x (m), forward")
-    ax.set_ylabel("ego y (m), left")
+    ax.set_xlabel("ego y (m)  <- left")
+    ax.set_ylabel("ego x (m)  ^ forward")
     ax.grid(True, alpha=0.15, linewidth=0.5)
 
     if not cells.is_empty:
-        ax.scatter(cells.centers_ego[:, 0], cells.centers_ego[:, 1],
+        ax.scatter(*_bev(cells.centers_ego[:, 0], cells.centers_ego[:, 1]),
                    c="0.78", s=8, marker="s", edgecolors="none", zorder=1)
 
     for box in gt_boxes or []:
-        ax.add_patch(Polygon(box["corners"], closed=True, fill=False,
+        corners = np.column_stack(_bev(box["corners"][:, 0], box["corners"][:, 1]))
+        ax.add_patch(Polygon(corners, closed=True, fill=False,
                              edgecolor=GT_COLOR, linewidth=1.5,
                              linestyle="--", zorder=2))
         cx, cy = box["center"]
         if abs(cx) < plot_range - 5 and abs(cy) < plot_range - 3:
-            ax.text(cx, cy + 1.4, _short(box["name"]), fontsize=6,
+            sx, sy = _bev(cx, cy)
+            ax.text(float(sx), float(sy) + 1.4, _short(box["name"]), fontsize=6,
                     color="#b08900", ha="center", zorder=3)
 
     if cycle.num_points:
         moving = cycle.speed >= MOVING_SPEED
-        ax.scatter(cycle.points_ego[~moving, 0], cycle.points_ego[~moving, 1],
+        ax.scatter(*_bev(cycle.points_ego[~moving, 0], cycle.points_ego[~moving, 1]),
                    facecolors="none", edgecolors="0.35", s=16, linewidths=0.7,
                    zorder=4)
-        ax.scatter(cycle.points_ego[moving, 0], cycle.points_ego[moving, 1],
+        ax.scatter(*_bev(cycle.points_ego[moving, 0], cycle.points_ego[moving, 1]),
                    c=MOVING_COLOR, s=18, marker="^", edgecolors="none", zorder=5)
 
     for detection in detections:
         color = MOVING_COLOR if detection.is_moving else STATIC_COLOR
         x, y = detection.position_ego
         width, length = detection.size[0], detection.size[1]
-        ax.add_patch(Rectangle((x - length / 2, y - width / 2), length, width,
+        # Ego extent x +/- length/2, y +/- width/2 becomes screen_x +/- width/2,
+        # screen_y +/- length/2 -- the box dimensions swap with the axes.
+        ax.add_patch(Rectangle((-y - width / 2, x - length / 2), width, length,
                                fill=False, edgecolor=color, linewidth=1.8, zorder=6))
-        ax.plot(x, y, marker="o", color=color, markersize=4,
+        sx, sy = _bev(x, y)
+        ax.plot(sx, sy, marker="o", color=color, markersize=4,
                 markeredgecolor="white", markeredgewidth=0.6, zorder=8)
         if detection.is_moving:
             vx, vy = detection.velocity_ego
-            ax.arrow(x, y, vx, vy, head_width=1.1, head_length=1.4,
-                     fc=color, ec=color, length_includes_head=True, zorder=7)
-            ax.text(x + 1.2, y + 1.2, f"{detection.speed:.1f}", fontsize=6.5,
-                    color=color, fontweight="bold", zorder=9)
+            ax.arrow(float(sx), float(sy), -vy, vx, head_width=1.1,
+                     head_length=1.4, fc=color, ec=color,
+                     length_includes_head=True, zorder=7)
+            ax.text(float(sx) + 1.2, float(sy) + 1.2, f"{detection.speed:.1f}",
+                    fontsize=6.5, color=color, fontweight="bold", zorder=9)
 
-    ax.add_patch(Rectangle((-1.4, -0.95), 4.7, 1.9, facecolor=EGO_COLOR,
+    # Ego vehicle: 4.7 m along forward (screen_y), 1.9 m across (screen_x).
+    ax.add_patch(Rectangle((-0.95, -1.4), 1.9, 4.7, facecolor=EGO_COLOR,
                            edgecolor="none", zorder=10))
 
     ax.legend(handles=[

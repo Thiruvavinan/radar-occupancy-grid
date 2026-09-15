@@ -21,8 +21,9 @@ measures neither height nor orientation, so those are filled with constants.
 
 ![BEV](outputs/stage1/scene-0103/frame_016.png)
 
-Grey squares are accumulated grid cells, amber dashed are annotations, teal and
-red are detections (red = moving, arrow = one second of travel).
+Forward is up, left is left. Grey squares are accumulated grid cells, amber
+dashed are annotations, teal and red are detections (red = moving, arrow = one
+second of travel).
 
 ---
 
@@ -39,6 +40,19 @@ physically see, with classification ignored:
 It finds about a third of visible objects, and is right about 60% of the time
 when it reports one. Velocity error is **0.20 m/s** — Doppler is what radar
 measures well.
+
+Split by whether the ground truth is actually moving (its own measured velocity,
+not its category — a parked car is not a mover and a walking pedestrian is), at
+a 2 m match:
+
+| | precision | recall | motion call correct |
+|---|---|---|---|
+| moving objects | 34.7% | 29.8% | 75.7% |
+| static objects | 50.6% | 29.4% | **98.7%** |
+
+It finds moving and static objects about equally well, but calls stationary
+things right almost always while missing the motion of roughly a quarter of real
+movers.
 
 On the full official benchmark: **mAP 0.0034, NDS 0.0158, car AP 0.0342.** That
 is low almost entirely because radar carries no semantic information — it cannot
